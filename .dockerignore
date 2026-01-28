@@ -1,0 +1,20 @@
+# Git管理ファイル
+.git
+.gitignore
+
+# Goのビルド成果物やローカルキャッシュ
+main
+*.exe
+*.test
+vendor/
+
+# Docker/環境設定関連
+Dockerfile
+docker-compose.yml
+compose.yaml
+README.md
+
+# エディタ設定など
+.vscode
+.idea
+.DS_Store

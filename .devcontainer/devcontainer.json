@@ -1,0 +1,30 @@
+{
+  "name": "Go Dev Container",
+  "dockerComposeFile": "../docker-compose.dev.yml",
+  "service": "backend",
+  "workspaceFolder": "/app",
+  "forwardPorts": [8000],
+  "runServices": ["backend", "db"],
+  "shutdownAction": "stopCompose",
+
+  "customizations": {
+    "vscode": {
+      "extensions": ["golang.go"],
+      "settings": {
+        "editor.formatOnSave": true,
+        "[go]": {
+          "editor.defaultFormatter": "golang.go",
+          "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+          },
+          "editor.formatOnSave": true,
+          "editor.tabSize": 2,
+          "editor.insertSpaces": true
+        },
+        "go.useLanguageServer": true,
+        "go.formatTool": "goimports",
+        "go.vetOnSave": "package"
+      }
+    }
+  }
+}
