@@ -9,7 +9,10 @@
 
   "customizations": {
     "vscode": {
-      "extensions": ["golang.go"],
+      "extensions": [
+        "golang.go",
+        "inferrinizzard.prettier-sql-vscode"
+      ],
       "settings": {
         "editor.formatOnSave": true,
         "[go]": {
@@ -23,7 +26,13 @@
         },
         "go.useLanguageServer": true,
         "go.formatTool": "goimports",
-        "go.vetOnSave": "package"
+        "go.vetOnSave": "package",
+        "[sql]": {
+            "editor.defaultFormatter": "inferrinizzard.prettier-sql-vscode"
+        },
+        "Prettier-SQL.expressionWidth": 120,
+        "Prettier-SQL.keywordCase": "upper",    
+        "Prettier-SQL.SQLFlavourOverride": "postgresql"
       }
     }
   }
