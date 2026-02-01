@@ -48,36 +48,36 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  deploy:
-    name: Deploy via SSH
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+  # deploy:
+  #   name: Deploy via SSH
+  #   needs: build-and-push
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - name: Copy docker-compose file to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT || 22 }}
-          source: "docker-compose.prod.yml"
-          target: "/var/www/myapp/"
+  #     - name: Copy docker-compose file to server
+  #       uses: appleboy/scp-action@v0.1.7
+  #       with:
+  #         host: ${{ secrets.SSH_HOST }}
+  #         username: ${{ secrets.SSH_USER }}
+  #         key: ${{ secrets.SSH_PRIVATE_KEY }}
+  #         port: ${{ secrets.SSH_PORT || 22 }}
+  #         source: "docker-compose.prod.yml"
+  #         target: "/var/www/myapp/"
 
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3 
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT || 22 }}
-          script: |
-            set -e
-            cd /var/www/myapp
+  #     - name: Deploy via SSH
+  #       uses: appleboy/ssh-action@v1.0.3 
+  #       with:
+  #         host: ${{ secrets.SSH_HOST }}
+  #         username: ${{ secrets.SSH_USER }}
+  #         key: ${{ secrets.SSH_PRIVATE_KEY }}
+  #         port: ${{ secrets.SSH_PORT || 22 }}
+  #         script: |
+  #           set -e
+  #           cd /var/www/myapp
             
-            docker compose -f docker-compose.prod.yml pull
+  #           docker compose -f docker-compose.prod.yml pull
             
-            docker compose -f docker-compose.prod.yml up -d
+  #           docker compose -f docker-compose.prod.yml up -d
             
-            docker image prune -f
+  #           docker image prune -f
