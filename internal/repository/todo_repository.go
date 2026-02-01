@@ -29,7 +29,7 @@ func toModel(d db.Todo) *model.Todo {
 		ID:        d.ID,
 		Title:     d.Title,
 		Completed: d.Completed,
-		CreatedAt: d.CreatedAt.Time, 
+		CreatedAt: d.CreatedAt.Time,
 		UpdatedAt: d.UpdatedAt.Time,
 	}
 }
@@ -74,7 +74,7 @@ func (r *todoRepository) UpdateTitle(ctx context.Context, id int64, title string
 		ID:    id,
 		Title: title,
 	}
-	
+
 	item, err := r.queries.UpdateTodoTitle(ctx, arg)
 	if err != nil {
 		return nil, err

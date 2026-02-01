@@ -9,7 +9,7 @@ import (
 )
 
 type TodoService interface {
-    // 戻り値をポインタ (*model.Todo) にすると、nilチェックなどがしやすくなります
+	// 戻り値をポインタ (*model.Todo) にすると、nilチェックなどがしやすくなります
 	ListTodos(ctx context.Context) ([]*model.Todo, error)
 	GetTodo(ctx context.Context, id int64) (*model.Todo, error)
 	CreateTodo(ctx context.Context, title string) (*model.Todo, error)

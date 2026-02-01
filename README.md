@@ -80,3 +80,52 @@ curl -X PATCH http://localhost:8000/todos/1/completed \
 # 削除
 curl -X DELETE http://localhost:8000/todos/1
 ```
+
+## テスト
+
+### ユニットテスト
+
+ユニットテストは通常の `go test` で実行できます:
+
+```bash
+go test ./...
+```
+
+追加したテスト:
+- `internal/service` : サービス層のユニットテスト
+
+
+## CI / CD
+
+このリポジトリには GitHub Actions のワークフローを追加しています。
+
+- CI: [.github/workflows/ci.yml](.github/workflows/ci.yml#L1)
+	- トリガー: `push`（`main` ブランチ）および `pull_request`
+	- 内容: `actions/setup-go` を使い、`go mod download` → `gofmt` チェック → `go vet` → `go test ./... -v -race` を実行します。
+	- 目的: コード整形・静的解析・ユニットテストの自動実行
+
+- CD: [.github/workflows/cd.yml](.github/workflows/cd.yml#L1)
+	- トリガー: `push`（`main` ブランチ）
+	- 内容: マルチアーキテクチャ対応でイメージをビルドし、GitHub Container Registry (GHCR) にプッシュします。イメージメタ情報は `docker/metadata-action` で生成され、`docker/build-push-action` で `ghcr.io/${{ github.repository }}` にタグ付きでプッシュします。
+	- 必要権限: ワークフロー内で `packages: write` を要求しており、`GITHUB_TOKEN` を用いて GHCR にログインします。
+	- 追加デプロイ: オプションで SSH を使ったリモートデプロイが行えます（`appleboy/scp-action` と `appleboy/ssh-action` を使用）。
+
+必要なシークレット（リポジトリの Settings → Secrets に追加）:
+
+- `SSH_HOST` — デプロイ先ホスト（SSH）
+- `SSH_USER` — デプロイ用ユーザー名
+- `SSH_PRIVATE_KEY` — 秘密鍵（PEM 形式）
+- `SSH_PORT` — （省略可、デフォルト 22）
+
+メモ:
+
+- デフォルトの CD は `ghcr.io/<owner>/<repo>:latest` などのタグでイメージをプッシュします。タグ方針を変えたい場合は `.github/workflows/cd.yml` の `docker/metadata-action` 設定を編集してください。
+- SSH デプロイを有効にするには上記シークレットを設定してください。ワークフローはリモートの `/var/www/myapp` に `docker-compose.prod.yml` をコピーし、`docker compose -f docker-compose.prod.yml pull` と `docker compose -f docker-compose.prod.yml up -d` を実行します。必要に応じてパスやコマンドを編集してください。
+- ワークフロー定義ファイル:
+	- [.github/workflows/ci.yml](.github/workflows/ci.yml#L1)
+	- [.github/workflows/cd.yml](.github/workflows/cd.yml#L1)
+	- [docker-compose.prod.yml](docker-compose.prod.yml#L1)
+
+まずは PR を作って CI を確認してください。問題なければ `main` にマージして CD を試すことができます。
+
+

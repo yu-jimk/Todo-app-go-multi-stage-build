@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  test:
+    name: Test & Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.3'
+          cache: true
+  
+      # 依存関係を明示的にダウンロード（なくても動くが、あるとログが見やすい）
+      - name: Download modules
+        run: go mod download
+
+      # gofmtのチェック
+      - name: Check formatting (gofmt)
+        run: |
+          out=$(gofmt -l .) || true
+          if [ -n "$out" ]; then echo "gofmt needs to be run on:"; echo "$out"; exit 1; fi
+
+      # go vetの実行
+      - name: Run go vet
+        run: go vet ./...
+
+      # テスト実行
+      - name: Run tests
+        run: go test ./... -v -race
